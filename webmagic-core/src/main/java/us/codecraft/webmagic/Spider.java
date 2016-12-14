@@ -647,11 +647,6 @@ public class Spider implements Runnable, Task {
         return site;
     }
 
-    @Override
-    public long getSpiderId() {
-        return site.getSpiderId();
-    }
-
     public List<SpiderListener> getSpiderListeners() {
         return spiderListeners;
     }

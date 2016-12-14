@@ -373,11 +373,6 @@ public class Site {
             public Site getSite() {
                 return Site.this;
             }
-
-            @Override
-            public long getSpiderId() {
-                return Site.this.getSpiderId();
-            }
         };
     }
 

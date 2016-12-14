@@ -23,9 +23,4 @@ public interface Task {
      * @return site
      */
     Site getSite();
-
-
-    long getSpiderId();
-
-
 }

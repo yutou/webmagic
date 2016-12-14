@@ -34,6 +34,7 @@ public class FilePipelineTest {
             public Site getSite() {
                 return null;
             }
+
         };
     }
     @Test
