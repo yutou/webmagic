@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * url and html utils.
+ * url and html util.
  *
  * @author code4crafter@gmail.com <br>
  * @since 0.1.0
@@ -86,12 +86,12 @@ public class UrlUtils {
     /**
      * allow blank space in quote
      */
-    private static Pattern patternForHrefWithQuote = Pattern.compile("(<a[^<>]*href=)[\"']([^\"'<>]*)[\"']", Pattern.CASE_INSENSITIVE);
+    private static Pattern patternForHrefWithQuote = Pattern.compile("(<a[^<>]* href=)[\"']([^\"'<>]*)[\"']", Pattern.CASE_INSENSITIVE);
 
     /**
      * disallow blank space without quote
      */
-    private static Pattern patternForHrefWithoutQuote = Pattern.compile("(<a[^<>]*href=)([^\"'<>\\s]+)", Pattern.CASE_INSENSITIVE);
+    private static Pattern patternForHrefWithoutQuote = Pattern.compile("(<a[^<>]* href=)([^\"'<>\\s]+)", Pattern.CASE_INSENSITIVE);
 
     public static String fixAllRelativeHrefs(String html, String url) {
         html = replaceByPattern(html, url, patternForHrefWithQuote);

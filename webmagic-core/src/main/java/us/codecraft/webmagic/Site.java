@@ -3,7 +3,6 @@ package us.codecraft.webmagic;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.apache.http.HttpHost;
-
 import us.codecraft.webmagic.proxy.ProxyPool;
 import us.codecraft.webmagic.utils.UrlUtils;
 
@@ -18,56 +17,32 @@ import java.util.*;
  */
 public class Site {
 
-    private String domain;
-
-    private String userAgent;
-
-    private Map<String, String> defaultCookies = new LinkedHashMap<String, String>();
-
-    private Table<String, String, String> cookies = HashBasedTable.create();
-
-    private String charset;
-
-    /**
-     * startUrls is the urls the crawler to start with.
-     */
-    private List<Request> startRequests = new ArrayList<Request>();
-
-    private int sleepTime = 5000;
-
-    private int retryTimes = 0;
-
-    private int cycleRetryTimes = 0;
-
-    private int retrySleepTime = 1000;
-
-    private int timeOut = 5000;
-
     private static final Set<Integer> DEFAULT_STATUS_CODE_SET = new HashSet<Integer>();
-
-    private Set<Integer> acceptStatCode = DEFAULT_STATUS_CODE_SET;
-
-    private Map<String, String> headers = new HashMap<String, String>();
-
-    private HttpHost httpProxy;
-
-    private ProxyPool httpProxyPool;
-
-    private boolean useGzip = true;
-
-    /**
-     * @see us.codecraft.webmagic.utils.HttpConstant.Header
-     * @deprecated
-     */
-    public static interface HeaderConst {
-
-        public static final String REFERER = "Referer";
-    }
-
 
     static {
         DEFAULT_STATUS_CODE_SET.add(200);
     }
+
+    private String domain;
+    private String userAgent;
+    private Map<String, String> defaultCookies = new LinkedHashMap<String, String>();
+    private Table<String, String, String> cookies = HashBasedTable.create();
+    private String charset;
+    /**
+     * startUrls is the urls the crawler to start with.
+     */
+    private List<Request> startRequests = new ArrayList<Request>();
+    private int sleepTime = 5000;
+    private int retryTimes = 0;
+    private int cycleRetryTimes = 0;
+    private int retrySleepTime = 1000;
+    private int timeOut = 5000;
+    private Set<Integer> acceptStatCode = DEFAULT_STATUS_CODE_SET;
+    private Map<String, String> headers = new HashMap<String, String>();
+    private HttpHost httpProxy;
+    private ProxyPool httpProxyPool;
+    private boolean useGzip = true;
+    private long spiderId;
 
     /**
      * new a Site
@@ -104,17 +79,6 @@ public class Site {
     }
 
     /**
-     * set user agent
-     *
-     * @param userAgent userAgent
-     * @return this
-     */
-    public Site setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-        return this;
-    }
-
-    /**
      * get cookies
      *
      * @return get cookies
@@ -128,7 +92,7 @@ public class Site {
      *
      * @return get cookies
      */
-    public Map<String,Map<String, String>> getAllCookies() {
+    public Map<String, Map<String, String>> getAllCookies() {
         return cookies.rowMap();
     }
 
@@ -139,6 +103,17 @@ public class Site {
      */
     public String getUserAgent() {
         return userAgent;
+    }
+
+    /**
+     * set user agent
+     *
+     * @param userAgent userAgent
+     * @return this
+     */
+    public Site setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+        return this;
     }
 
     /**
@@ -162,6 +137,15 @@ public class Site {
     }
 
     /**
+     * get charset set manually
+     *
+     * @return charset
+     */
+    public String getCharset() {
+        return charset;
+    }
+
+    /**
      * Set charset of page manually.<br>
      * When charset is not set or set to null, it can be auto detected by Http header.
      *
@@ -171,15 +155,6 @@ public class Site {
     public Site setCharset(String charset) {
         this.charset = charset;
         return this;
-    }
-
-    /**
-     * get charset set manually
-     *
-     * @return charset
-     */
-    public String getCharset() {
-        return charset;
     }
 
     public int getTimeOut() {
@@ -197,6 +172,15 @@ public class Site {
     }
 
     /**
+     * get acceptStatCode
+     *
+     * @return acceptStatCode
+     */
+    public Set<Integer> getAcceptStatCode() {
+        return acceptStatCode;
+    }
+
+    /**
      * Set acceptStatCode.<br>
      * When status code of http response is in acceptStatCodes, it will be processed.<br>
      * {200} by default.<br>
@@ -208,15 +192,6 @@ public class Site {
     public Site setAcceptStatCode(Set<Integer> acceptStatCode) {
         this.acceptStatCode = acceptStatCode;
         return this;
-    }
-
-    /**
-     * get acceptStatCode
-     *
-     * @return acceptStatCode
-     */
-    public Set<Integer> getAcceptStatCode() {
-        return acceptStatCode;
     }
 
     /**
@@ -266,6 +241,16 @@ public class Site {
     }
 
     /**
+     * Get the interval between the processing of two pages.<br>
+     * Time unit is micro seconds.<br>
+     *
+     * @return the interval between the processing of two pages,
+     */
+    public int getSleepTime() {
+        return sleepTime;
+    }
+
+    /**
      * Set the interval between the processing of two pages.<br>
      * Time unit is micro seconds.<br>
      *
@@ -278,22 +263,22 @@ public class Site {
     }
 
     /**
-     * Get the interval between the processing of two pages.<br>
-     * Time unit is micro seconds.<br>
-     *
-     * @return the interval between the processing of two pages,
-     */
-    public int getSleepTime() {
-        return sleepTime;
-    }
-
-    /**
      * Get retry times immediately when download fail, 0 by default.<br>
      *
      * @return retry times when download fail
      */
     public int getRetryTimes() {
         return retryTimes;
+    }
+
+    /**
+     * Set retry times when download fail, 0 by default.<br>
+     *
+     * @return this
+     */
+    public Site setRetryTimes(int retryTimes) {
+        this.retryTimes = retryTimes;
+        return this;
     }
 
     public Map<String, String> getHeaders() {
@@ -310,16 +295,6 @@ public class Site {
      */
     public Site addHeader(String key, String value) {
         headers.put(key, value);
-        return this;
-    }
-
-    /**
-     * Set retry times when download fail, 0 by default.<br>
-     *
-     * @return this
-     */
-    public Site setRetryTimes(int retryTimes) {
-        this.retryTimes = retryTimes;
         return this;
     }
 
@@ -361,6 +336,18 @@ public class Site {
         return useGzip;
     }
 
+    /**
+     * Whether use gzip. <br>
+     * Default is true, you can set it to false to disable gzip.
+     *
+     * @param useGzip
+     * @return
+     */
+    public Site setUseGzip(boolean useGzip) {
+        this.useGzip = useGzip;
+        return this;
+    }
+
     public int getRetrySleepTime() {
         return retrySleepTime;
     }
@@ -375,18 +362,6 @@ public class Site {
         return this;
     }
 
-    /**
-     * Whether use gzip. <br>
-     * Default is true, you can set it to false to disable gzip.
-     *
-     * @param useGzip
-     * @return
-     */
-    public Site setUseGzip(boolean useGzip) {
-        this.useGzip = useGzip;
-        return this;
-    }
-
     public Task toTask() {
         return new Task() {
             @Override
@@ -397,6 +372,11 @@ public class Site {
             @Override
             public Site getSite() {
                 return Site.this;
+            }
+
+            @Override
+            public long getSpiderId() {
+                return Site.this.getSpiderId();
             }
         };
     }
@@ -421,9 +401,8 @@ public class Site {
         if (headers != null ? !headers.equals(site.headers) : site.headers != null) return false;
         if (startRequests != null ? !startRequests.equals(site.startRequests) : site.startRequests != null)
             return false;
-        if (userAgent != null ? !userAgent.equals(site.userAgent) : site.userAgent != null) return false;
+        return !(userAgent != null ? !userAgent.equals(site.userAgent) : site.userAgent != null);
 
-        return true;
     }
 
     @Override
@@ -459,18 +438,8 @@ public class Site {
                 '}';
     }
 
-    /**
-     * Set httpProxyPool, String[0]:ip, String[1]:port <br>
-     *
-     * @return this
-     */
-    public Site setHttpProxyPool(List<String[]> httpProxyList) {
-        this.httpProxyPool=new ProxyPool(httpProxyList);
-        return this;
-    }
-
     public Site enableHttpProxyPool() {
-        this.httpProxyPool=new ProxyPool();
+        this.httpProxyPool = new ProxyPool();
         return this;
     }
 
@@ -478,12 +447,22 @@ public class Site {
         return httpProxyPool;
     }
 
+    /**
+     * Set httpProxyPool, String[0]:ip, String[1]:port <br>
+     *
+     * @return this
+     */
+    public Site setHttpProxyPool(List<String[]> httpProxyList) {
+        this.httpProxyPool = new ProxyPool(httpProxyList);
+        return this;
+    }
+
     public HttpHost getHttpProxyFromPool() {
         return httpProxyPool.getProxy();
     }
 
-    public void returnHttpProxyToPool(HttpHost proxy,int statusCode) {
-        httpProxyPool.returnProxy(proxy,statusCode);
+    public void returnHttpProxyToPool(HttpHost proxy, int statusCode) {
+        httpProxyPool.returnProxy(proxy, statusCode);
     }
 
     public Site setProxyReuseInterval(int reuseInterval) {
@@ -491,4 +470,21 @@ public class Site {
         return this;
     }
 
+    public long getSpiderId() {
+        return spiderId;
+    }
+
+    public Site setSpiderId(long spiderId) {
+        this.spiderId = spiderId;
+        return this;
+    }
+
+    /**
+     * @see us.codecraft.webmagic.utils.HttpConstant.Header
+     * @deprecated
+     */
+    public interface HeaderConst {
+
+        String REFERER = "Referer";
+    }
 }
