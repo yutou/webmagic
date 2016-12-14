@@ -42,7 +42,7 @@ public class Site {
     private HttpHost httpProxy;
     private ProxyPool httpProxyPool;
     private boolean useGzip = true;
-    private long spiderId;
+    private long crawlerId;
 
     /**
      * new a Site
@@ -465,12 +465,12 @@ public class Site {
         return this;
     }
 
-    public long getSpiderId() {
-        return spiderId;
+    public long getCrawlerId() {
+        return crawlerId;
     }
 
-    public Site setSpiderId(long spiderId) {
-        this.spiderId = spiderId;
+    public Site setCrawlerId(long crawlerId) {
+        this.crawlerId = crawlerId;
         return this;
     }
 

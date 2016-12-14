@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Created by pro-daitr on 16/12/13.
  */
-public class GenSpiderIdUtils {
+public class GenCrawlerIdUtils {
     private final static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
     public static long generateDefaultId() {
